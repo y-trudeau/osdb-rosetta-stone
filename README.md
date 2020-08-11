@@ -4,8 +4,29 @@ While database engines like MySQL and PostgreSQL have a lot in common, performin
 
 ## Databases
 
-As a starting point, the focus is restricted to [MySQL](https://dev.mysql.com/) version 8.0.x and [PostgreSQL](https://postgresql.org) 12.x. Other opensource databases could be added in the future.  Keep in mind, this is a work in progress, the content will be enriched over time and it will need to be updated with the release of new versions of the databases. 
+As a starting point, the focus is restricted to [MySQL](https://dev.mysql.com/) version 8.0.x and [PostgreSQL](https://postgresql.org) 12.x. Other opensource databases could be added in the future.  Keep in mind, this is a work in progress, the content will be enriched over time and it will need to be updated with the release of new versions of the databases.  Also, the goal is to provide a starting point, not to get lost with details.
 
 ## Categories
 
-- [Architecture](Architecture/Architecture.md)
+**[Architecture](Architecture/Architecture.md)**
+: A high level view of their main component and how they interact
+
+**[Configuration](Configuration/Configuration.md)**
+: How to configure them and some common tuning tips
+
+**[Metadata](Metadata/Metadata.md)**
+: How to get information about the data stored in the database
+
+**[Metrics](Metrics/Metrics.md)**
+: How to get operational metrics about the database workload
+
+**[Operation](Operation/Operation.md)**
+: How to perform key DBA tasks 
+
+**[SQL](SQL/SQL.md)**
+: Some differences with the SQL syntax
+
+
+
+
+
