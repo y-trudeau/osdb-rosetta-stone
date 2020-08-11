@@ -9,22 +9,28 @@ As a starting point, the focus is restricted to [MySQL](https://dev.mysql.com/) 
 ## Categories
 
 **[Architecture](Architecture/Architecture.md)**
-: A high level view of their main component and how they interact
+
+Gives a high level view of their main component and how they interact.
 
 **[Configuration](Configuration/Configuration.md)**
-: How to configure them and some common tuning tips
+
+How you can configure these databases along with some common tuning tips.
 
 **[Metadata](Metadata/Metadata.md)**
-: How to get information about the data stored in the database
+
+How you can get information about the data stored in the database.
 
 **[Metrics](Metrics/Metrics.md)**
-: How to get operational metrics about the database workload
+
+How you can get operational metrics about the databases workload.
 
 **[Operation](Operation/Operation.md)**
-: How to perform key DBA tasks 
+
+How you can perform key DBA tasks. 
 
 **[SQL](SQL/SQL.md)**
-: Some differences with the SQL syntax
+
+What are the SQL syntax differences. 
 
 
 
