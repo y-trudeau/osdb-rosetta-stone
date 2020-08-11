@@ -8,3 +8,4 @@ As a starting point, the focus is restricted to [MySQL](https://dev.mysql.com/) 
 
 ## Categories
 
+- [Architecture](Architecture/Architecture.md)
