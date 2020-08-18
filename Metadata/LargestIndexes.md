@@ -2,24 +2,37 @@
 
 ## MySQL
 
+The statement below only works for InnoDB:
+
 ```
-mysql> select concat(database_name,'.',table_name), index_name, round(stat_value*16/1024,1) indexMB from mysql.innodb_index_stats where database_name not in ('mysql','sys') and stat_name = 'size' and index_name <> 'PRIMARY' limit 10;
-+--------------------------------------+------------+---------+
-| concat(database_name,'.',table_name) | index_name | indexMB |
-+--------------------------------------+------------+---------+
-| sysbench.sbtest1                     | k_1        |     3.0 |
-| sysbench.sbtest10                    | k_10       |     3.0 |
-| sysbench.sbtest2                     | k_2        |     3.0 |
-| sysbench.sbtest3                     | k_3        |     3.0 |
-| sysbench.sbtest4                     | k_4        |     3.0 |
-| sysbench.sbtest5                     | k_5        |     3.0 |
-| sysbench.sbtest6                     | k_6        |     3.0 |
-| sysbench.sbtest7                     | k_7        |     3.0 |
-| sysbench.sbtest8                     | k_8        |     3.0 |
-| sysbench.sbtest9                     | k_9        |     3.0 |
-+--------------------------------------+------------+---------+
+select p.schema_table, index_name, round(p.pages*ps.page_size/1024/1024,1) IndexMB
+from (select concat(database_name,'.',table_name) schema_table, index_name, stat_value pages
+      from mysql.innodb_index_stats
+      where database_name not in ('mysql','sys')
+        and stat_name = 'size'
+        and index_name <> 'PRIMARY') p
+  inner join (select replace(NAME,'/','.') schema_table,
+                if(ROW_FORMAT='Compressed',ZIP_PAGE_SIZE,@@innodb_page_size) page_size
+              from INNODB_TABLES) ps on p.schema_table = ps.schema_table
+order by IndexMB desc limit 10;
++-------------------+------------+---------+
+| schema_table      | index_name | indexMB |
++-------------------+------------+---------+
+| sysbench.sbtest1  | k_1        |     3.0 |
+| sysbench.sbtest10 | k_10       |     3.0 |
+| sysbench.sbtest2  | k_2        |     3.0 |
+| sysbench.sbtest3  | k_3        |     3.0 |
+| sysbench.sbtest4  | k_4        |     3.0 |
+| sysbench.sbtest5  | k_5        |     3.0 |
+| sysbench.sbtest6  | k_6        |     3.0 |
+| sysbench.sbtest7  | k_7        |     3.0 |
+| sysbench.sbtest8  | k_8        |     3.0 |
+| sysbench.sbtest9  | k_9        |     3.0 |
++-------------------+------------+---------+
 10 rows in set (0,00 sec)
 ```
+
+The primary key indexes are not listed here because InnoDB is a clustered storage engine, the primary key b-tree is where the rows are stored.
 
 ## PostgreSQL
 
