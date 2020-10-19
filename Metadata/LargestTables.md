@@ -24,8 +24,8 @@ mysql> SELECT concat(table_schema,'.',table_name) schema_table,concat(round(tabl
 ## PostgreSQL
 
 ```
-sysbench=# SELECT CONCAT(n.nspname,'.', c.relname) AS table, pg_size_pretty(st.table_size),
-  pg_size_pretty(st.index_size), pg_size_pretty(st.table_size+st.index_size) total_size,
+sysbench=# SELECT CONCAT(n.nspname,'.', c.relname) AS table, pg_size_pretty(st.table_size) "data",
+  pg_size_pretty(st.index_size) "index", pg_size_pretty(st.table_size+st.index_size) total_size,
   c.reltuples as rows
 FROM pg_class c
   JOIN (SELECT x.indrelid, pg_relation_size(x.indrelid) AS table_size,
@@ -40,17 +40,16 @@ FROM pg_class c
   JOIN pg_namespace n ON n.oid = c.relnamespace
 ORDER BY total_size DESC
 LIMIT 10;
-
-      table      | pg_size_pretty | pg_size_pretty | total_size |  rows  
------------------+----------------+----------------+------------+--------
- public.sbtest1  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest2  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest3  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest4  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest5  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest6  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest7  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest8  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest9  | 21 MB          | 4432 kB        | 25 MB      | 100000
- public.sbtest10 | 21 MB          | 4432 kB        | 25 MB      | 100000
+      table      | data  | index | total_size |  rows  
+-----------------+-------+-------+------------+--------
+ public.sbtest1  | 25 MB | 18 MB | 43 MB      | 100000
+ public.sbtest2  | 25 MB | 18 MB | 43 MB      | 100000
+ public.sbtest3  | 25 MB | 18 MB | 43 MB      | 100000
+ public.sbtest4  | 25 MB | 18 MB | 43 MB      | 100000
+ public.sbtest5  | 25 MB | 18 MB | 43 MB      | 100000
+ public.sbtest6  | 25 MB | 18 MB | 43 MB      | 100000
+ public.sbtest7  | 25 MB | 18 MB | 43 MB      | 100000
+ public.sbtest8  | 25 MB | 19 MB | 43 MB      | 100000
+ public.sbtest9  | 25 MB | 18 MB | 43 MB      | 100000
+ public.sbtest10 | 25 MB | 18 MB | 43 MB      | 100000
 ```
