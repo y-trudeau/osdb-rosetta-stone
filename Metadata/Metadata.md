@@ -1,10 +1,10 @@
 # Metadata
 
-**[Largest tables](Metadata/LargestTables.md)**
+**[Largest tables](LargestTables.md)**
 
 The largest tables on the server
 
-**[Largest indexes](Metadata/LargestIndexes.md)**
+**[Largest indexes](LargestIndexes.md)**
 
 The largest indexes on the server
 
