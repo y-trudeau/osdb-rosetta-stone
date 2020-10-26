@@ -76,6 +76,21 @@ sysbench=# \dt
 (10 rows)
 ```
 
+Similarly to the MySQL describe command, the columns and indexes of a table can be obtained from:
+```
+sysbench=# \d sbtest1
+                                Table "public.sbtest1"
+ Column |      Type      | Collation | Nullable |               Default               
+--------+----------------+-----------+----------+-------------------------------------
+ id     | integer        |           | not null | nextval('sbtest1_id_seq'::regclass)
+ k      | integer        |           | not null | 0
+ c      | character(120) |           | not null | ''::bpchar
+ pad    | character(60)  |           | not null | ''::bpchar
+Indexes:
+    "sbtest1_pkey" PRIMARY KEY, btree (id)
+    "k_1" btree (k)
+```
+
 There is apparently no way of getting the DDL creating a table like the "SHOW CREATE TABLE" statement of MySQL.  The desired output can be obtained from the `pg_dump` tool:
 
 ```
