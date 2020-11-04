@@ -3,7 +3,13 @@
 ## MySQL
 
 ```
-mysql> SELECT concat(table_schema,'.',table_name) schema_table,concat(round(table_rows/1000000,2),'M') nrows,concat(round(data_length/(1024*1024*1024),2),'G') Data,round(data_length/table_rows,0) DataRow ,concat(round(index_length/(1024*1024*1024),2),'G') idx,round(index_length/table_rows,0) as IdxRow,concat(round((data_length+index_length)/(1024*1024*1024),2),'G') totSize,round(index_length/data_length,2) idxfrac FROM information_schema.TABLES where table_schema not in ('mysql','information_schema','performance_schema') ORDER BY data_length+index_length DESC LIMIT 10;
+mysql>
+SELECT concat(table_schema,'.',table_name) schema_table,concat(round(table_rows/1000000,2),'M') nrows,
+  concat(round(data_length/(1024*1024*1024),2),'G') Data,round(data_length/table_rows,0) DataRow ,
+  concat(round(index_length/(1024*1024*1024),2),'G') idx,round(index_length/table_rows,0) as IdxRow,
+  concat(round((data_length+index_length)/(1024*1024*1024),2),'G') totSize,round(index_length/data_length,2) idxfrac
+  FROM information_schema.TABLES where table_schema not in ('mysql','information_schema','performance_schema')
+  ORDER BY data_length+index_length DESC LIMIT 10;
 +-------------------+-------+-------+---------+-------+--------+---------+---------+
 | schema_table      | nrows | Data  | DataRow | idx   | IdxRow | totSize | idxfrac |
 +-------------------+-------+-------+---------+-------+--------+---------+---------+
