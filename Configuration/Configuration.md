@@ -197,24 +197,94 @@ This variable sets the maximum number of pages that can be flushed by flush cycl
 
 #### bgwriter_lru_multiplier
 
-This parameter controls how many pages will be flushed in a cycle, capped at bgwriter_lru_maxpages. It is a multipler of the amount of pages/buffers that were read recently, over the last 16 cycles. The default value is 2.
+This parameter controls how many pages will be flushed in a cycle, capped at bgwriter_lru_maxpages. It is a multipler of the amount of pages/buffers that were read recently, over the last 16 cycles. The default value is 2 which allows for some over flushing ahead of possible spikes.
 
 ## Durability
 
+Durability is essentially the ability to remember transactions that happened right before a crash. A fully durable configuration is needed for applications where the loss of even just a single transaction after a crash is major.  Ideally database should be durable but a fully durable configuration limits the performance even when fast flash storage is used.  Here's how the durability of MySQL and PostgreSQL can be configured.
+
 ### MySQL
 
-| innodb_flush_log_at_timeout    | 1        |
-| innodb_flush_log_at_trx_commit | 2        |
+#### innodb_flush_log_at_trx_commit
+
+This variable is the main way to control the durability of InnoDB.  The default value, 1, means the InnoDB log files (redo) have to be flushed for each transaction.  Setting the value to 0 causes the transaction log records to be accumulated in the log buffer and flushed/fsynced at every flush log at timeout interval which is by default 1 second (see next variable).  Finally, when set to 2, the transaction log records are written to the OS and flushed/fsynced at every flush log at timeout interval.
+
+#### innodb_flush_log_at_timeout  
+
+This parameter determines the time interval at which the InnoDB log files are flushed/fsynced.  The default is 1 second and it is also the smallest value.
+
+#### sync_binlog
+
+So far we just talked about the InnoDB redo log files, MySQL also needs to handle the durability of its binary log files when replication is used. This parameter defines the interval (in transaction) at which the binary log files are flushed.  The default is 1 means a flush at every transaction. It can be set at any positive integer values, for example at 10, the binary log will be flushed at every 10 transactions.  A value of 0 disable the flushing of the binary log.
 
 ### PostgreSQL
 
-synchronous_commit=off
- wal_writer_delay                       | 200
- wal_writer_flush_after                 | 128
-  wal_sync_method                        | fdatasync
+#### synchronous_commit
+
+This variable controls how PostgreSQL flushes its WAL after a commit.  When sets to "on", a commit returns only when the transaction data has been written to the WAL and flushed.  This is similar to InnoDB when innodb_flush_log_at_trx_commit is 1. If the variable is set to "off", the WAL is flushed at regular intervals, at most 3 times the value defined by wal_writer_delay (see below).
+
+#### wal_writer_delay
+
+This variable determines the sleep time between cycles of the background writer.  This main impacts of that is on the transaction durability when synchronous_commit is "off".  At most, in asynchronous commit mode, a transaction will be fully durable after 3 times the value of wal_writer_delay.  The default value is 200ms.
+
+#### wal_writer_flush_after                 
+
+When a large amount of data is flushed (fsynced), since that data has to be immediately written to storage, the response time of the storage is impacted.  This variable limits the amount of data flushed to the WAL to a number of WAL blocks. The default value of this variable is 128 which means, considering the default WAL block size of 8KB, the WAL flushes will cover at most 1MB.
+
+#### wal_sync_method                        
+
+There are a few ways of insuring a file has been flushed to disk.  The default value is through the use of the fdatasync call which flushes the data but not necessarily the metadata. fdatasync is normally faster the fsyncs, another possible values that flushes also the metadata.  MySQL/InnoDB only uses fsyncs on the InnoDB redo log files.
 
 ## Background threads
 
+Databases use a number of background processes or threads to perform all sorts of asynchronous or maintenance operations.  
+
 ### MySQL
 
+#### innodb_read_io_threads/innodb_write_io_threads
+
+MySQL uses these IO threads to complete asynchronous IO operations, the default is 4 for each kind. When innodb_use_native_aio is enabled, these threads handle the kernel IO completion replies.  Even on very IO busy servers, these threads have little work to do.  The threads allow to increase the number of pending IO requests beyond 256.
+
+However, if innodb_use_native_aio is not used or asynchronous IO not supported, these threads are used to implement a user space asynchronous IO implementation.  Without asynchronous IO, the number of pending IO requests essentially becomes the number of IO threads.
+
+#### innodb_log_writer_threads
+
+This thread handles the flushed of the redo log with a dedicated thread.  This variable is only present in MySQL 8.0.22+ and has a default value of 1. Percona server has a dedicated log flushing thread since quite a long time and is always enabled.
+
+#### innodb_parallel_read_threads
+
+MySQL 8.0.14 introduced the possibility to use more than a single thread for some read operations, this variable limits the number of such threads.  It has been introduced in MySQL 8.0.14+ and has a default value of 4.
+
+#### innodb_page_cleaners
+
+Dirty pages in the InnoDB buffer pool must eventually be written back to the data files, these threads handle that task. Unless you are using MySQL 8.0.20+ or Percona server 5.7.11+, you likely don't need more than a single cleaner thread, the doublewrite buffer would be a choke point.  The default value is 4.
+
+#### innodb_purge_threads
+
+As transactions are processed, InnoDB MVCC creates many records in the undo space and flags rows as deleted in table spaces. These records and deleted rows must be kept for as long as there are opened views needing them.  Eventually, as transactions complete, these can be removed by the purge threads. There is rarely a need to increase the number of purge threads.  If you are stuggling with a large history list, you should first consider upgrading to PS 5.7.33+ or MySQL 8.0 as the purge process has been improved considerably.  The default number of purge threads is 4.
+
+#### innodb_encryption_threads
+
+Those threads are used for key rotations when encryption is used.
+
+#### slave_parallel_workers
+
+MySQL supports parallel replication, this variable determines the number of threads used to process the incoming binary logs.
+
 ### PostgreSQL
+
+#### autovacuum_max_workers
+
+These processes handle the cleanup of the undo and of the delete rows, they are similar to the InnoDB Purge threads. The default value of this variable is 3.
+
+#### max_logical_replication_workers
+
+These workers apply changes to table when logical replication is used.  The default value of this variable is 4 and is included in max_worker_processes.
+
+#### max_parallel_workers
+
+This variable determines the maximum number of processes used for parallel operations.  These processes are taken from the pool defined by max_worker_processes.
+
+#### max_worker_processes
+
+This variable determines the total number of background threads used by PostgreSQL.  The default size of this pool of worker processes is 8.

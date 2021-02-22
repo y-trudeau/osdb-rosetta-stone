@@ -58,4 +58,22 @@ LIMIT 10;
  public.sbtest8  | 25 MB | 19 MB | 43 MB      | 100000
  public.sbtest9  | 25 MB | 18 MB | 43 MB      | 100000
  public.sbtest10 | 25 MB | 18 MB | 43 MB      | 100000
+
+
+   oid  | relname | relnamespace | reltype | reloftype | relowner | relam | relfilenode | reltablespace | relpages | reltuples | relallvisible | reltoastrelid | relhasindex | relisshared | relpersistence | relkind | relnatts | relchecks | relhasrules | relhastriggers | relhassubclass | relrowsecurity | relforcerowsecurity | relispopulated | relreplident | relispartition | relrewrite | relfrozenxid | relminmxid | relacl | reloptions | relpartbound
+-------+---------+--------------+---------+-----------+----------+-------+-------------+---------------+----------+-----------+---------------+---------------+-------------+-------------+----------------+---------+----------+-----------+-------------+----------------+----------------+----------------+---------------------+----------------+--------------+----------------+------------+--------------+------------+--------+------------+--------------
+ 16390 | sbtest1 |         2200 |   16392 |         0 |    16386 |     2 |       16390 |             0 |     3165 |    100000 |          3165 |             0 | t           | f           | p              | r       |        4 |         0 | f           | f              | f              | f              | f                   | t              | d            | f              |          0 |          492 |          1 |        |            |
+
+  oid  | datname  | datdba | encoding | datcollate  |  datctype   | datistemplate | datallowconn | datconnlimit | datlastsysoid | datfrozenxid | datminmxid | dattablespace |                          datacl                          
+-------+----------+--------+----------+-------------+-------------+---------------+--------------+--------------+---------------+--------------+------------+---------------+----------------------------------------------------------
+ 16387 | sysbench |     10 |        6 | fr_CA.UTF-8 | fr_CA.UTF-8 | f             | t            |           -1 |         13441 |          479 |          1 |          1663 | {=Tc/postgres,postgres=CTc/postgres,sbtest=CTc/postgres}
+
+
+ sysbench=# select * from pg_tablespace where oid=1663;
+ oid  |  spcname   | spcowner | spcacl | spcoptions
+------+------------+----------+--------+------------
+ 1663 | pg_default |       10 |        |
+(1 ligne)
+
+
 ```
