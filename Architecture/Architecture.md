@@ -1,7 +1,15 @@
 # Architecture
 
-**[Buffers.md](Buffers.md)**
+**[Memory Buffers](Buffers.md)**
 
+**[Checkpointing](Checkpointing.md)**
 
+**[Storage and files](Files.md)**
 
-Buffers.md  Checkpointing.md  Files.md  Redo.md  SupportProcesses.md  UserProcesses.md
+**[Redo logging](Redo.md)**  
+
+**[Support processes](SupportProcesses.md)**  
+
+**[User processes](UserProcesses.md)**
+
+**[Replication](Replication.md)**

@@ -32,7 +32,7 @@ How you can perform key DBA tasks.
 
 What are the SQL syntax differences. 
 
+**[Schema](Schema/Schema.md)**
 
-
-
+How to get information about the schema
 
